@@ -1,211 +1,278 @@
-# 📊 Analyse S&P 500 - Visualisation de Données Financières
+# Analyse S&P 500 - Documentation des Visualisations
 
-## 🎯 Objectif du Projet
-
-Ce projet réalise une analyse complète et interactive des données du **S&P 500** (les 50 plus grandes entreprises américaines) en temps réel. Les données sont récupérées automatiquement via l'API **Yahoo Finance** grâce au package R `tidyquant`.
+Cette documentation explique ce que chaque graphique montre dans les 5 notebooks d'analyse du S&P 500.
 
 ---
 
-## 📁 Structure du Projet
+## PARTIE 1 : Analyse Exploratoire (`partie_1.ipynb`)
 
-Le projet est divisé en **6 parties**, chacune explorant un aspect différent de la visualisation de données :
+Cette partie présente une vue d'ensemble des données S&P 500 avec des statistiques descriptives.
 
-### **partie_1.R** - 📈 Analyse Exploratoire
-**Objectif :** Comprendre la distribution et la composition du dataset
+### Graphique 1 : Histogramme des prix de fermeture actuels
+**Ce qu'on observe :**
+- La distribution des prix de clôture des 49 actions analysées
+- La majorité des actions se concentrent dans les tranches de prix basses (0-300 USD)
+- Quelques actions très chères créent une distribution asymétrique
+- Permet d'identifier si le portefeuille contient plutôt des actions bon marché ou premium
 
-**Étapes de nettoyage des données :**
-1. Vérification des valeurs manquantes (NA)
-2. Détection et suppression des doublons
-3. Suppression des lignes avec NA dans colonnes critiques
-4. Vérification de cohérence (prix/volumes négatifs)
-5. Validation des dates et périodes
+### Graphique 2 : Top 15 stocks par prix de fermeture
+**Ce qu'on observe :**
+- Les 15 actions les plus chères du S&P 500 dans notre échantillon
+- Généralement dominé par les valeurs technologiques (NVDA, GOOGL, ASML, etc.)
+- Code couleur par secteur pour identifier les secteurs premium
+- Montre que les actions technologiques ont tendance à avoir les prix unitaires les plus élevés
 
-**Visualisations créées :**
-- Histogramme des prix de fermeture actuels
-- Top 15 actions par prix
-- Répartition par secteur (Technology, Finance, Healthcare, etc.)
-- Volatilité moyenne par secteur (écart-type des rendements)
-- Volume moyen de trading par secteur
+### Graphique 3 : Distribution par secteur
+**Ce qu'on observe :**
+- Le nombre d'entreprises dans chaque secteur
+- Le secteur **Technology** domine largement avec environ 30+ actions
+- Les secteurs **Consumer**, **Healthcare** et **Finance** suivent
+- **Energy**, **Industrial** et **Real Estate** sont moins représentés
+- Reflète la composition moderne du S&P 500 orientée tech
 
-**Concepts clés :**
-- **Nettoyage de données** (data cleaning)
-- Distribution statistique
-- Agrégation par catégorie (secteur)
-- Calcul de volatilité
+### Graphique 4 : Volatilité par secteur
+**Ce qu'on observe :**
+- La volatilité moyenne (écart-type des rendements) par secteur
+- Les secteurs les plus risqués vs les plus stables
+- Généralement, **Energy** et **Technology** sont plus volatils
+- **Consumer** et **Healthcare** tendent à être plus stables
+- Aide les investisseurs à évaluer le risque sectoriel
 
----
-
-### **partie_2.R** - ⏱️ Analyses Temporelles
-**Objectif :** Étudier l'évolution des prix dans le temps
-
-**Visualisations créées :**
-- Timeline du prix moyen par secteur **avec smoothing curve (loess)**
-- Évolution du volume de trading (area chart)
-- Heatmap des rendements (secteur × mois)
-- Box plot des rendements quotidiens
-- Évolution normalisée des Top 5 actions (indice 100)
-
-**Concepts clés :**
-- Séries temporelles
-- **Courbe de lissage** (`geom_smooth`)
-- Heatmaps multivariées
-- Normalisation des données
-- Rendements financiers (returns)
+### Graphique 5 : Volume moyen par secteur
+**Ce qu'on observe :**
+- Le volume de trading moyen en millions d'actions échangées
+- **Technology** domine généralement avec les volumes les plus élevés
+- Indique la liquidité et l'intérêt des investisseurs par secteur
+- Un volume élevé = meilleure liquidité et facilité d'achat/vente
 
 ---
 
-### **partie_3.R** - 🗺️ Visualisation Géographique
-**Objectif :** Analyser la répartition géographique des entreprises aux USA
+## PARTIE 2 : Analyses Temporelles (`partie_2.ipynb`)
 
-**Visualisations créées :**
-- Distribution des sièges sociaux par état (USA)
-- Prix moyen par état
-- Scatter plot géographique (latitude/longitude)
-- Heatmap secteur × état
-- **Carte USA interactive** : États colorés selon le nombre de sociétés
+Cette partie analyse l'évolution dans le temps des actions et secteurs.
 
-**Concepts clés :**
-- Cartographie avec `maps`
-- Données géospatiales (lat/lon)
-- Agrégation géographique
-- Choropleth map (carte choroplèthe)
+### Graphique 1 : Évolution du prix moyen par secteur
+**Ce qu'on observe :**
+- La trajectoire des prix moyens de chaque secteur sur l'année
+- **Technology** montre généralement la croissance la plus forte
+- Permet d'identifier les secteurs en tendance haussière ou baissière
+- On peut voir les corrélations entre secteurs (mouvements similaires)
+- Les périodes de volatilité du marché affectent tous les secteurs simultanément
 
----
+### Graphique 2 : Évolution du volume de trading par secteur
+**Ce qu'on observe :**
+- Graphique en aires empilées montrant le volume total par secteur
+- Les pics de volume indiquent des périodes de forte activité (annonces, événements)
+- **Technology** représente la plus grande part du volume total
+- Permet d'identifier les périodes d'intérêt accru des investisseurs
+- Les volumes baissent généralement pendant les vacances et périodes calmes
 
-### **partie_4.R** - 🎬 Animations
-**Objectif :** Créer des animations dynamiques pour montrer l'évolution temporelle
+### Graphique 3 : Heatmap - Rendements par secteur et mois
+**Ce qu'on observe :**
+- Matrice colorée avec rendements moyens mensuels par secteur
+- **Vert** = rendements positifs, **Rouge** = rendements négatifs
+- Permet d'identifier les mois forts/faibles pour chaque secteur
+- Révèle les patterns saisonniers (certains secteurs performent mieux à certains mois)
+- Montre les périodes de correction du marché (toute la colonne en rouge)
 
-**Animations créées :**
-- **sp500_price_evolution.gif** : Évolution des prix (box plot animé)
-- **sp500_sector_change.gif** : Changement cumulé par secteur
-- **sp500_top5_ranking.gif** : Classement dynamique des Top 5 actions
+### Graphique 4 : Box plot des rendements par secteur
+**Ce qu'on observe :**
+- La distribution complète des rendements quotidiens par secteur
+- La médiane (ligne centrale) montre le rendement typique
+- Les quartiles montrent la dispersion des rendements
+- Les outliers (points isolés) indiquent les jours de mouvements extrêmes
+- Permet de comparer la stabilité entre secteurs
+- La ligne rouge à 0% sépare gains et pertes
 
-**Concepts clés :**
-- Animation avec `gganimate`
-- Transitions temporelles (`transition_time`)
-- Création de GIFs
-
-**Paramètres :**
-- 100 frames, 10 fps
-- Durée : ~10 secondes par animation
-
----
-
-### **partie_5.R** - 🔍 Graphiques Interactifs (Plotly)
-**Objectif :** Créer des visualisations interactives avec zoom, hover, etc.
-
-**Visualisations créées :**
-- **Scatter plot** : Prix vs Volume (taille = changement 30j)
-- **Timeline interactive** : Top 5 actions avec hover
-- **Box plot interactif** : Distribution des prix par secteur
-- **Heatmap de corrélation** : Matrice de corrélation entre secteurs
-
-**Concepts clés :**
-- Interactivité avec `plotly`
-- Tooltips personnalisés
-- Matrices de corrélation
+### Graphique 5 : Évolution du prix des Top 5 actions
+**Ce qu'on observe :**
+- Évolution normalisée des 5 plus grandes capitalisations (AAPL, MSFT, GOOGL, AMZN, NVDA)
+- Prix normalisé à 100 au début permet de comparer la performance relative
+- NVDA montre souvent la croissance la plus spectaculaire
+- Permet d'identifier quelle action a le mieux/moins bien performé
+- Montre la corrélation entre ces géants tech
 
 ---
 
-### **partie_6.R** - 🖥️ Dashboard Shiny Interactif
-**Objectif :** Créer une application web interactive avec filtres dynamiques
+## PARTIE 3 : Visualisation Géographique (`partie_3.ipynb`)
 
-**Fonctionnalités :**
+Cette partie analyse la localisation géographique des sièges sociaux aux États-Unis.
 
-**5 Onglets :**
-1. **Vue principale** : Timeline des prix avec statistiques clés
-2. **Analyse par secteur** : Distribution et volatilité
-3. **Données filtrées** : Tableau interactif
-4. **Statistiques** : Résumés et rendements
-5. **Comparaison** : Comparaison des actions (min/moyen/max)
+### Graphique 1 : Distribution des stocks par état
+**Ce qu'on observe :**
+- Top 15 états avec le plus de sièges sociaux S&P 500
+- **Californie (CA)** domine largement (Silicon Valley + LA)
+- **New York (NY)**, **Texas (TX)** et **Washington (WA)** suivent
+- Reflète les hubs économiques et technologiques américains
+- Montre la concentration géographique du pouvoir économique
 
-**Filtres disponibles :**
-- Secteur (Technology, Finance, Healthcare, etc.)
-- Actions spécifiques (multi-sélection)
-- Plage de prix (slider)
-- Plage de dates (calendrier)
+### Graphique 2 : Prix moyen par état
+**Ce qu'on observe :**
+- Le prix moyen des actions par état
+- Les états avec des entreprises tech (CA, WA) ont généralement des prix plus élevés
+- Reflète le type d'industrie dominant dans chaque état
+- Permet d'identifier les états avec les entreprises les plus valorisées
 
-**Concepts clés :**
-- Application web Shiny
-- Réactivité (`reactive()`)
-- Interface utilisateur (UI/Server)
+### Graphique 3 : Scatter géographique (lat/lon)
+**Ce qu'on observe :**
+- Visualisation des sièges sociaux sur une carte latitude/longitude
+- Taille des points proportionnelle au prix de l'action
+- Couleur par secteur
+- Concentration massive sur la côte Ouest (Californie)
+- Concentration financière sur la côte Est (New York)
+- Le reste du pays est moins dense
 
----
+### Graphique 4 : Heatmap secteur par état
+**Ce qu'on observe :**
+- Matrice montrant la spécialisation sectorielle de chaque état
+- **Californie** : fortement orientée Technology
+- **New York** : Finance et divers secteurs
+- **Texas** : Energy et Technology
+- **New Jersey** : Healthcare et Consumer
+- Révèle l'écosystème industriel de chaque région
 
-## 🛠️ Technologies Utilisées
-
-| Package | Usage |
-|---------|-------|
-| **tidyverse** | Manipulation de données (dplyr, tidyr) |
-| **ggplot2** | Visualisations statiques |
-| **tidyquant** | Récupération données financières (Yahoo Finance) |
-| **plotly** | Graphiques interactifs |
-| **gganimate** | Animations |
-| **shiny** | Application web interactive |
-| **maps** | Cartes géographiques USA |
-| **gifski** | Encodage GIF pour animations |
-
----
-
-## 📊 Données Utilisées
-
-### Source : **Yahoo Finance** (via API gratuite)
-
-**50 actions du S&P 500 :**
-- **Technology** : AAPL, MSFT, GOOGL, NVDA, META, AMD, INTC, etc.
-- **Finance** : JPM, V, MA, BRK.B, PYPL
-- **Healthcare** : JNJ, UNH, ABT, ABBV, GILD
-- **Consumer** : AMZN, TSLA, WMT, HD, DIS, MCD, KO, COST, PEP, NFLX
-- **Energy** : XOM, CVX
-- **Industrial** : BA, MMM
-- **Real Estate** : CCI
-
-**Période :** Dernière année (365 jours)
-
-**Mise à jour :** Données en temps réel (à chaque exécution)
+### Graphique 5 : Carte USA avec nombre de sociétés par état
+**Ce qu'on observe :**
+- Carte choroplèthe interactive des États-Unis
+- États colorés selon le nombre de sièges sociaux
+- **Californie** en rouge foncé (concentration maximale)
+- **États du centre** souvent vides ou faiblement représentés
+- Visualisation claire de la disparité géographique
+- Hover pour voir détails (nombre exact, prix moyen)
 
 ---
 
-## 📈 Indicateurs Financiers Calculés
+## PARTIE 4 : Animations (`partie_4.ipynb`)
 
-| Indicateur | Formule | Interprétation |
-|------------|---------|----------------|
-| **Prix de fermeture** | `close` | Valeur de l'action |
-| **Volume** | `volume` | Nombre d'actions échangées |
-| **Rendement** | `(close - lag(close)) / lag(close) * 100` | Performance quotidienne (%) |
-| **Volatilité** | `sd(rendements)` | Risque / variabilité |
-| **Prix normalisé** | `close / first(close) * 100` | Évolution relative (indice) |
+Cette partie crée 3 animations GIF pour visualiser l'évolution temporelle.
 
----
+### Animation 1 : `sp500_price_evolution.gif`
+**Ce qu'on observe :**
+- Évolution des box plots de prix pour les Top 10 actions semaine par semaine
+- Montre comment la distribution des prix change au fil du temps
+- Les box plots révèlent la volatilité de chaque action
+- Permet de voir les tendances haussières/baissières en mouvement
+- Code couleur par secteur
 
-## 🔑 Points Clés pour la Présentation
+### Animation 2 : `sp500_sector_change.gif`
+**Ce qu'on observe :**
+- Barres horizontales montrant le changement cumulé de prix par secteur
+- Les barres grandissent/rétrécissent selon la performance sectorielle
+- Permet d'identifier quel secteur surperforme à chaque période
+- La barre traverse l'axe 0% pour montrer gains/pertes
+- Révèle les cycles sectoriels et rotations d'investissement
 
-### 1. **Originalité**
-✅ Données en temps réel (pas de CSV statique)
-✅ 50 actions du S&P 500
-✅ 6 types de visualisations différentes
-
-### 2. **Techniques Avancées**
-✅ Animations (gganimate)
-✅ Dashboard interactif (Shiny)
-✅ Visualisations géographiques
-✅ Graphiques interactifs (Plotly)
-
-### 3. **Interprétation Financière**
-- **Volatilité** : Mesure le risque (Technology = plus volatile)
-- **Volume** : Indique la liquidité
-- **Rendements** : Performance quotidienne
-- **Corrélation** : Mouvements synchronisés entre secteurs
-
-### 4. **Scalabilité**
-- Facile d'ajouter d'autres actions
-- Paramètres modifiables (plage de dates, fps animations, etc.)
-- Code modulaire et réutilisable
+### Animation 3 : `sp500_top5_ranking.gif`
+**Ce qu'on observe :**
+- Classement dynamique des 5 actions les plus chères
+- Les barres changent de longueur selon l'évolution des prix
+- Le classement se réorganise quand une action dépasse une autre
+- Montre la compétition entre les actions premium
+- Code couleur par secteur pour identifier les secteurs dominants
 
 ---
 
-## 📝 Notes
+## PARTIE 5 : Graphiques Interactifs Plotly (`partie_5.ipynb`)
 
-- Les données sont récupérées automatiquement à chaque exécution
-- Les GIFs sont sauvegardés dans le dossier du projet
-- Le dashboard Shiny peut être déployé en ligne (shinyapps.io)
+Cette partie utilise Plotly pour créer des visualisations interactives.
+
+### Graphique Interactif 1 : Prix vs Volume (Scatter)
+**Ce qu'on observe :**
+- Nuage de points avec prix en Y, volume en X
+- **Taille des bulles** = ampleur du changement de prix sur 30 jours
+- **Couleur** = secteur
+- Permet d'identifier les actions très tradées vs peu liquides
+- Les grosses bulles = forte volatilité récente
+- Interaction : hover pour voir détails, zoom, pan
+
+### Graphique Interactif 2 : Évolution temporelle des Top 5 stocks
+**Ce qu'on observe :**
+- Lignes interactives montrant l'évolution des prix des 5 géants
+- Permet de zoomer sur des périodes spécifiques
+- Hover unifié montre toutes les valeurs à une date donnée
+- Facilite la comparaison des trajectoires
+- Permet d'identifier les corrélations et divergences
+
+### Graphique Interactif 3 : Distribution des prix par secteur (Box plot)
+**Ce qu'on observe :**
+- Box plots interactifs montrant la distribution complète par secteur
+- Technology a généralement la plus grande dispersion de prix
+- Permet de comparer la variabilité entre secteurs
+- Interaction : hover pour statistiques détaillées (médiane, quartiles, outliers)
+- Identifie les secteurs avec les prix les plus homogènes
+
+### Graphique Interactif 4 : Heatmap des corrélations secteur
+**Ce qu'on observe :**
+- Matrice de corrélation entre les prix moyens des secteurs
+- **Rouge** = corrélation positive forte (mouvements similaires)
+- **Bleu** = corrélation négative (mouvements opposés)
+- La plupart des secteurs sont positivement corrélés (marché se déplace ensemble)
+- Certains secteurs comme Energy peuvent avoir des corrélations différentes
+- Valeurs numériques affichées dans chaque cellule
+- Utile pour la diversification de portefeuille
+
+---
+
+## PARTIE 6 : Dashboard Interactif Dash (`partie_6.py`)
+
+Ce fichier crée un dashboard web interactif avec Dash permettant de :
+- Sélectionner dynamiquement des actions et secteurs
+- Filtrer par période temporelle
+- Visualiser plusieurs métriques simultanément
+- Explorer les données de manière personnalisée
+
+---
+
+## Fichiers Générés
+
+- **sp500_price_evolution.gif** : Animation des box plots de prix
+- **sp500_sector_change.gif** : Animation du changement sectoriel
+- **sp500_top5_ranking.gif** : Animation du classement Top 5
+
+---
+
+## Technologies Utilisées
+
+- **Pandas** : Manipulation de données
+- **NumPy** : Calculs numériques
+- **Matplotlib** : Graphiques statiques
+- **Seaborn** : Graphiques statistiques avancés
+- **Plotly** : Graphiques interactifs
+- **yfinance** : Récupération des données boursières
+- **Dash** : Dashboard web interactif
+
+---
+
+## Insights Clés des Analyses
+
+1. **Domination Technologique** : Le secteur Technology domine en nombre d'actions, volume de trading et croissance des prix
+
+2. **Concentration Géographique** : La Californie héberge la majorité des entreprises tech du S&P 500
+
+3. **Volatilité Sectorielle** : Energy et Technology sont les secteurs les plus volatils, tandis que Consumer Staples est plus stable
+
+4. **Corrélations Fortes** : La plupart des secteurs évoluent dans la même direction, rendant la diversification sectorielle moins efficace
+
+5. **Giants Tech** : AAPL, MSFT, GOOGL, AMZN et NVDA représentent une part disproportionnée de la capitalisation et du volume
+
+---
+
+## Utilisation
+
+Pour exécuter les notebooks :
+
+```bash
+# Installer les dépendances
+pip install -r requirements.txt
+
+# Lancer Jupyter
+jupyter notebook
+
+# Pour le dashboard Dash
+python partie_6.py
+```
+
+---
+
+**Auteur** : Analyse S&P 500 - TP Visualisation de Données
+**Date** : Janvier 2025
