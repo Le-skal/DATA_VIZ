@@ -1,0 +1,12 @@
+pandas
+numpy
+matplotlib
+seaborn
+yfinance
+plotly
+scipy
+jupyter
+notebook
+ipykernel
+pillow
+dash
