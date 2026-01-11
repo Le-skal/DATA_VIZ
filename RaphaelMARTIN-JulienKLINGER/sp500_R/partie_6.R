@@ -573,16 +573,19 @@ server <- function(input, output, session) {
     if (nrow(filtered_data()) == 0) {
       return(plot_ly() %>% add_text(x = 0.5, y = 0.5, text = "AUCUNE DONNÉE DISPONIBLE"))
     }
-    
+
     plot_data <- filtered_data() %>% arrange(date)
-    
-    # Palette beige/noir
-    colors <- c("#d4c5b9", "#a89984", "#8b7d6b", "#6e5f4f", "#514433")
-    
+
+    # Palette contrastée pour fond noir (couleurs vibrantes et distinctes)
+    colors <- c("#d4c5b9", "#00CED1", "#FF6B6B", "#4ECDC4", "#FFE66D",
+                "#95E1D3", "#F38181", "#AA96DA", "#FCBAD3", "#A8E6CF",
+                "#FF8B94", "#85D4E3", "#F7DC6F", "#BB8FCE", "#F8B739",
+                "#52B788", "#E85D75", "#6A8EAE", "#FFA07A", "#98D8C8")
+
     plot_ly(plot_data, x = ~date, y = ~close, color = ~symbol,
-            colors = rep(colors, length.out = length(unique(plot_data$symbol))),
+            colors = colors,
             type = "scatter", mode = "lines",
-            line = list(width = 2),
+            line = list(width = 2.5),
             hovertemplate = "<b>%{fullData.name}</b><br>DATE: %{x|%Y-%m-%d}<br>PRIX: $%{y:.2f}<extra></extra>") %>%
       layout(
         xaxis = list(title = "DATE", gridcolor = "#333333", showgrid = TRUE, zeroline = FALSE),
@@ -590,7 +593,8 @@ server <- function(input, output, session) {
         hovermode = "x unified",
         plot_bgcolor = "#0a0a0a",
         paper_bgcolor = "#0a0a0a",
-        font = list(color = "#d4c5b9", family = "IBM Plex Mono")
+        font = list(color = "#d4c5b9", family = "IBM Plex Mono"),
+        legend = list(font = list(size = 10))
       )
   })
   
@@ -600,10 +604,16 @@ server <- function(input, output, session) {
       group_by(sector) %>%
       summarise(count = n(), .groups = "drop") %>%
       arrange(desc(count))
-    
+
+    # Couleurs distinctes par secteur
+    sector_colors <- c("Technology" = "#00CED1", "Consumer" = "#FFE66D",
+                       "Finance" = "#95E1D3", "Healthcare" = "#F38181",
+                       "Energy" = "#FF8B94", "Industrial" = "#AA96DA",
+                       "Real Estate" = "#FCBAD3")
+
     plot_ly(sector_data, x = ~reorder(sector, count), y = ~count,
             type = "bar",
-            marker = list(color = "#d4c5b9",
+            marker = list(color = ~sector_colors[sector],
                           line = list(color = "#000000", width = 2)),
             hovertemplate = "<b>%{x}</b><br>%{y} ACTIONS<extra></extra>") %>%
       layout(
@@ -611,7 +621,8 @@ server <- function(input, output, session) {
         yaxis = list(title = "NOMBRE", gridcolor = "#333333"),
         plot_bgcolor = "#0a0a0a",
         paper_bgcolor = "#0a0a0a",
-        font = list(color = "#d4c5b9", family = "IBM Plex Mono")
+        font = list(color = "#d4c5b9", family = "IBM Plex Mono"),
+        showlegend = FALSE
       )
   })
   
@@ -622,11 +633,14 @@ server <- function(input, output, session) {
       group_by(sector) %>%
       summarise(volatility = sd(returns, na.rm = TRUE), .groups = "drop") %>%
       arrange(desc(volatility))
-    
+
+    # Gradient de couleur selon volatilité (rouge = élevé, vert = faible)
     plot_ly(volatility_data, x = ~reorder(sector, volatility), y = ~volatility,
             type = "bar",
-            marker = list(color = "#a89984",
-                          line = list(color = "#000000", width = 2)),
+            marker = list(color = ~volatility,
+                          colorscale = list(c(0, "#52B788"), c(0.5, "#FFE66D"), c(1, "#E85D75")),
+                          line = list(color = "#000000", width = 2),
+                          showscale = FALSE),
             hovertemplate = "<b>%{x}</b><br>VOLATILITÉ: %{y:.2f}%<extra></extra>") %>%
       layout(
         xaxis = list(title = "SECTEUR", gridcolor = "#333333"),
@@ -644,15 +658,17 @@ server <- function(input, output, session) {
       filter(!is.na(returns)) %>%
       group_by(sector) %>%
       summarise(avg_returns = mean(returns, na.rm = TRUE), .groups = "drop")
-    
+
     plot_ly(returns_data, x = ~sector, y = ~avg_returns,
             type = "bar",
-            marker = list(color = ~ifelse(avg_returns >= 0, "#d4c5b9", "#8b7d6b"),
+            marker = list(color = ~ifelse(avg_returns >= 0, "#52B788", "#E85D75"),
                           line = list(color = "#000000", width = 2)),
             hovertemplate = "<b>%{x}</b><br>RENDEMENT: %{y:.2f}%<extra></extra>") %>%
       layout(
         xaxis = list(title = "SECTEUR", gridcolor = "#333333"),
         yaxis = list(title = "RENDEMENT MOYEN (%)", gridcolor = "#333333"),
+        shapes = list(type = "line", x0 = 0, x1 = 1, xref = "paper",
+                      y0 = 0, y1 = 0, line = list(color = "#d4c5b9", width = 2, dash = "dash")),
         plot_bgcolor = "#0a0a0a",
         paper_bgcolor = "#0a0a0a",
         font = list(color = "#d4c5b9", family = "IBM Plex Mono")
@@ -695,15 +711,19 @@ server <- function(input, output, session) {
                 .groups = "drop") %>%
       arrange(desc(avg_price)) %>%
       head(10)
-    
+
+    # Couleur gradient selon le prix moyen
     plot_ly(comparison_data, x = ~symbol, y = ~avg_price,
             type = "bar",
-            marker = list(color = "#d4c5b9", line = list(color = "#000000", width = 2)),
+            marker = list(color = ~avg_price,
+                          colorscale = list(c(0, "#4ECDC4"), c(0.5, "#FFE66D"), c(1, "#FF6B6B")),
+                          line = list(color = "#000000", width = 2),
+                          showscale = FALSE),
             error_y = list(symmetric = FALSE,
                            array = ~(max_price - avg_price),
                            arrayminus = ~(avg_price - min_price),
-                           color = "#8b7d6b",
-                           thickness = 2),
+                           color = "#d4c5b9",
+                           thickness = 2.5),
             hovertemplate = "<b>%{x}</b><br>MOYEN: $%{y:.2f}<extra></extra>") %>%
       layout(
         xaxis = list(title = "ACTION", gridcolor = "#333333"),
@@ -721,11 +741,13 @@ server <- function(input, output, session) {
       summarise(avg_volume = mean(volume, na.rm = TRUE) / 1e6, .groups = "drop") %>%
       arrange(desc(avg_volume)) %>%
       head(10)
-    
+
     plot_ly(volume_data, x = ~reorder(symbol, avg_volume), y = ~avg_volume,
             type = "bar",
-            marker = list(color = "#a89984",
-                          line = list(color = "#000000", width = 2)),
+            marker = list(color = ~avg_volume,
+                          colorscale = list(c(0, "#95E1D3"), c(0.5, "#F8B739"), c(1, "#F38181")),
+                          line = list(color = "#000000", width = 2),
+                          showscale = FALSE),
             hovertemplate = "<b>%{x}</b><br>VOLUME: %{y:.2f}M<extra></extra>") %>%
       layout(
         xaxis = list(title = "ACTION", gridcolor = "#333333"),
